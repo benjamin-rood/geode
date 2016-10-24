@@ -8,8 +8,42 @@ type Branch struct {
 	left, right *Branch
 }
 
-// Build constructs the kdtree from a set of assumed to be valid Datapoints
-func Build(ds Datapoints, depth int) *Branch {
+// PivotFunc calculates the pivot value
+type PivotFunc func(Datapoints, int) float64
+
+var (
+	// LazyAverage implements a simple fast average split to produce the pivot value
+	// Sufficient for uniformly distributed values in the Datapoints
+	LazyAverage = func(ds Datapoints, axis int) float64 {
+		sz := len(ds)
+		first := ds[0].set[axis]
+		last := ds[sz-1].set[axis]
+		pivot := (first + last) / 2
+		return pivot
+	}
+
+	// LazyMedian implements a median split on an unordered set for the pivot value
+	LazyMedian = func(ds Datapoints, axis int) float64 {
+		midpoint := len(ds) / 2
+		return ds[midpoint].set[axis]
+	}
+
+	// Median implements a true median split on a sorted set for the pivot value
+	Median = func(ds Datapoints, axis int) float64 {
+		By(Comparator(axis)).Sort(ds)
+		midpoint := len(ds) / 2
+		return ds[midpoint].set[axis]
+	}
+
+	// Mean implements a true mean (average) calculation to determine the pivot value
+	Mean = func(ds Datapoints, axis int) float64 {
+		sz := float64(len(ds))
+		return sumValuesAlongAxis(ds, axis) / sz
+	}
+)
+
+// Build constructs the k-d tree from a set of assumed to be valid Datapoints
+func Build(ds Datapoints, depth int, pivotDef PivotFunc) *Branch {
 	branch := Branch{
 		Datapoints: ds,
 		pivot:      0,
@@ -24,24 +58,20 @@ func Build(ds Datapoints, depth int) *Branch {
 	dimensionality := len(ds[0].set)
 	axis := depth % dimensionality
 
-	first := branch.Datapoints[0].set[axis]
-	last := branch.Datapoints[sz-1].set[axis]
-
-	branch.pivot = (first + last) / 2
+	branch.pivot = pivotDef(ds, axis)
 
 	var leftSet, rightSet Datapoints
 
 	for i := range ds {
-		switch ds[i].set[axis] < branch.pivot {
-		case true:
+		if ds[i].set[axis] < branch.pivot {
 			leftSet = append(leftSet, ds[i])
-		case false:
+		} else {
 			rightSet = append(rightSet, ds[i])
 		}
 	}
 
-	branch.left = Build(leftSet, depth+1)
-	branch.right = Build(rightSet, depth+1)
+	branch.left = Build(leftSet, depth+1, pivotDef)
+	branch.right = Build(rightSet, depth+1, pivotDef)
 	return &branch
 }
 
