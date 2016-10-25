@@ -3,8 +3,6 @@ package kdtree
 import (
 	"encoding/json"
 	"fmt"
-	"math"
-	"math/rand"
 	"sort"
 )
 
@@ -31,14 +29,14 @@ func (d *Datapoint) Data() interface{} {
 // Set returns a copy of the slice of floating-point values
 func (d *Datapoint) Set() []float64 {
 	var export = make([]float64, len(d.set), len(d.set))
-	copy(d.set, export)
+	copy(export, d.set)
 	return export
 }
 
 // NewDatapoint is an explicit constructor as an alternative to manually declaring
-func NewDatapoint(data *interface{}, points []float64) *Datapoint {
+func NewDatapoint(data interface{}, points []float64) *Datapoint {
 	f := make([]float64, len(points), len(points))
-	copy(points, f)
+	copy(f, points)
 	d := Datapoint{
 		data: data,
 		set:  f,
@@ -53,17 +51,13 @@ func RandomDatapoint(n int) *Datapoint {
 	return RandomDatapointInRange(n, 0, 1)
 }
 
-func random(min, max float64) float64 {
-	return rand.Float64()*(max-min) + min
-}
-
 // RandomDatapointInRange will produce a 'free' PRNG Datapoint in n dimensions
 // where all values in the set lie in [min,max).
 // Useful for testing or adding noise to a dataset.
 func RandomDatapointInRange(n int, min, max float64) *Datapoint {
 	f := make([]float64, n, n)
 	for i := range f {
-		f[i] = random(min, max)
+		f[i] = randomFloatInRange(min, max)
 	}
 	d := Datapoint{
 		data: nil,
@@ -84,37 +78,6 @@ func (d *Datapoint) String() string {
 	present = present[0 : len(present)-2]
 	present += "]}\n"
 	return present
-}
-
-// Distance returns the Euclidean length of the line connecting any two Datapoints
-func Distance(p, q *Datapoint) float64 {
-	return math.Sqrt(DistanceSq(p, q))
-}
-
-// DistanceSq returns the length squared of the line connecting any two Datapoints
-func DistanceSq(p, q *Datapoint) float64 {
-	var differences = make([]float64, len(p.set), len(p.set))
-	for i := range p.set {
-		v := q.set[i] - p.set[i]
-		differences[i] = v * v
-	}
-	return sum(differences)
-}
-
-func sum(set []float64) float64 {
-	var result float64
-	for i := range set {
-		result += set[i]
-	}
-	return result
-}
-
-func sumValuesAlongAxis(ds Datapoints, axis int) float64 {
-	var sum float64
-	for i := range ds {
-		sum += ds[i].set[axis]
-	}
-	return sum
 }
 
 // By is the function signature required to wrap a given Less method as closure

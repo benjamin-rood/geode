@@ -13,7 +13,7 @@ type PivotFunc func(Datapoints, int) float64
 
 var (
 	// LazyAverage implements a simple fast average split to produce the pivot value
-	// Sufficient for uniformly distributed values in the Datapoints
+	// Sufficient for large numbers of Datapoints with uniformly distributed values
 	LazyAverage = func(ds Datapoints, axis int) float64 {
 		sz := len(ds)
 		first := ds[0].set[axis]
@@ -29,6 +29,7 @@ var (
 	}
 
 	// Median implements a true median split on a sorted set for the pivot value
+	// note: will be significantly slower
 	Median = func(ds Datapoints, axis int) float64 {
 		By(Comparator(axis)).Sort(ds)
 		midpoint := len(ds) / 2
@@ -42,7 +43,8 @@ var (
 	}
 )
 
-// Build constructs the k-d tree from a set of assumed to be valid Datapoints
+// Build constructs the k-d tree from a set of assumed to be valid Datapoints,
+// using a provided PivotFunc algorithm
 func Build(ds Datapoints, depth int, pivotDef PivotFunc) *Branch {
 	branch := Branch{
 		Datapoints: ds,
@@ -82,7 +84,7 @@ func Build(ds Datapoints, depth int, pivotDef PivotFunc) *Branch {
 // ANN(branch, target) = NN(branch, target)), the accuracy of ANN increases
 // dramatically with the density of the branch passed to ANN.
 // ANN achieves an extremely high degree of accuracy when the density of the points
-// in each axis > 100,000; where density is defined as the number of leaves / (max-min)).
+// in each axis > 100,000; where density is defined as the number of leaves / (max-min).
 func ANN(branch *Branch, target *Datapoint) *Datapoint {
 	if len(branch.Datapoints) == 1 {
 		return branch.Datapoints[0]
@@ -139,11 +141,13 @@ func inRange(xmin, xmax, lo, hi float64) bool {
 	return xmin >= lo && xmax <= hi
 }
 
+// Range holds lower and upper range values
+type Range struct {
+	min, max float64
+}
+
 // RangeQuery returns all Datapoints in a specified bounded area
-func RangeQuery(branch *Branch,
-	bounds []struct {
-		lo, hi float64
-	}) Datapoints {
+func RangeQuery(branch *Branch, bounds []Range) Datapoints {
 	if branch == nil {
 		return nil
 	}
@@ -158,8 +162,8 @@ func RangeQuery(branch *Branch,
 			intersection = inRange(
 				branch.Datapoints[0].set[axis],
 				branch.Datapoints[last].set[axis],
-				bounds[axis].lo,
-				bounds[axis].hi,
+				bounds[axis].min,
+				bounds[axis].max,
 			)
 			if !intersection {
 				break
@@ -173,10 +177,10 @@ func RangeQuery(branch *Branch,
 	axis := branch.depth % dimensionality
 
 	var rangeSet, leftSet, rightSet Datapoints
-	if branch.pivot > bounds[axis].lo { // continue tree traversal left
+	if branch.pivot > bounds[axis].min { // continue tree traversal left
 		leftSet = RangeQuery(branch.left, bounds)
 	}
-	if branch.pivot <= bounds[axis].hi {
+	if branch.pivot <= bounds[axis].max {
 		rightSet = RangeQuery(branch.right, bounds)
 	}
 
