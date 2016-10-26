@@ -13,13 +13,22 @@ type Datapoint struct {
 	set  []float64
 }
 
-// Dimensionality returns spatial dimensions the Datapoint fits over.
-func (d *Datapoint) Dimensionality() int {
-	return len(d.set)
-}
-
 // Datapoints is a slice multiple of pointers to individual Datapoints
 type Datapoints []*Datapoint
+
+// NewDatapoint is an explicit constructor as an alternative to manual declaration
+func NewDatapoint(data interface{}, points []float64) (*Datapoint, error) {
+	if points == nil {
+		return nil, fmt.Errorf("passed nil points slice to Datapoint constructor")
+	}
+	f := make([]float64, len(points), len(points))
+	copy(f, points)
+	d := Datapoint{
+		data: data,
+		set:  f,
+	}
+	return &d, nil
+}
 
 // Data returns the interface value of the object that the Datapoint is linked with.
 func (d *Datapoint) Data() interface{} {
@@ -33,28 +42,22 @@ func (d *Datapoint) Set() []float64 {
 	return export
 }
 
-// NewDatapoint is an explicit constructor as an alternative to manually declaring
-func NewDatapoint(data interface{}, points []float64) *Datapoint {
-	f := make([]float64, len(points), len(points))
-	copy(f, points)
-	d := Datapoint{
-		data: data,
-		set:  f,
-	}
-	return &d
+// Dimensionality returns spatial dimensions the Datapoint fits over.
+func (d *Datapoint) Dimensionality() int {
+	return len(d.set)
 }
 
 // RandomDatapoint will produce a 'free' PRNG Datapoint in n dimensions
 // where all values in the set lie in [0,1).
 // Useful for testing or adding noise to a dataset.
-func RandomDatapoint(n int) *Datapoint {
+func RandomDatapoint(n uint) *Datapoint {
 	return RandomDatapointInRange(n, 0, 1)
 }
 
 // RandomDatapointInRange will produce a 'free' PRNG Datapoint in n dimensions
 // where all values in the set lie in [min,max).
 // Useful for testing or adding noise to a dataset.
-func RandomDatapointInRange(n int, min, max float64) *Datapoint {
+func RandomDatapointInRange(n uint, min, max float64) *Datapoint {
 	f := make([]float64, n, n)
 	for i := range f {
 		f[i] = randomFloatInRange(min, max)
