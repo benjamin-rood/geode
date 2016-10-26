@@ -1,6 +1,7 @@
 package kdtree
 
 import (
+	"fmt"
 	"math"
 	"math/big"
 	"reflect"
@@ -113,7 +114,7 @@ func TestDatapointConstructor(t *testing.T) {
 func TestDatapointSetCopy(t *testing.T) {
 
 	var randomPoints Datapoints
-	for i := 1; i <= 10; i++ {
+	for i := uint(1); i <= 10; i++ {
 		p := RandomDatapoint(i)
 		randomPoints = append(randomPoints, p)
 	}
@@ -178,4 +179,53 @@ func TestDatapointLinkedDataIdentical(t *testing.T) {
 			want:     `, fromSrc)
 		}
 	}
+}
+
+func TestDatapointDimensionality(t *testing.T) {
+	var dimTests = []struct {
+		dp   *Datapoint
+		want int
+	}{
+		{RandomDatapoint(3), 3},
+		{RandomDatapoint(0), 0},
+	}
+
+	for _, dt := range dimTests {
+		if dt.want != dt.dp.Dimensionality() {
+			t.Fail()
+		}
+	}
+}
+
+func TestDatapointStringer(t *testing.T) {
+	dpStringStr := `{data: cassandra}, {set: [0:{6.0000125}, 1:{6.10000125}, 2:{-1.3173}, 3:{1373}]}`
+	dpRationalStr := `{data: &{{false [5]} {false [4]}}}, {set: [0:{1}, 1:{2}, 2:{3}, 3:{4}, 4:{5}]}`
+	var stringerTests = []struct {
+		dp   *Datapoint
+		want string
+	}{
+		{
+			&Datapoint{
+				&str,
+				[]float64{6.0000125, 6.10000125, -1.3173, 1373},
+			},
+			dpStringStr,
+		},
+		{
+			&Datapoint{
+				&rational,
+				[]float64{1, 2, 3, 4, 5},
+			},
+			dpRationalStr,
+		},
+	}
+
+	for _, s := range stringerTests {
+		got := fmt.Sprint(s.dp)
+		if got != s.want {
+			t.Error(`want: `, s.want, `
+			got: `, got)
+		}
+	}
+
 }
