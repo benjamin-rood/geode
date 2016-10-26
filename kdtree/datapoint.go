@@ -79,7 +79,7 @@ func (d *Datapoint) String() string {
 		present += fmt.Sprintf("%d:{%v}, ", i, d.set[i])
 	}
 	present = present[0 : len(present)-2]
-	present += "]}\n"
+	present += "]}"
 	return present
 }
 
