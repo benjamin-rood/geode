@@ -17,9 +17,9 @@ type Datapoint struct {
 type Datapoints []*Datapoint
 
 // NewDatapoint is an explicit constructor as an alternative to manual declaration
-func NewDatapoint(data interface{}, points []float64) (*Datapoint, error) {
+func NewDatapoint(data interface{}, points []float64) *Datapoint {
 	if points == nil {
-		return nil, fmt.Errorf("passed nil points slice to Datapoint constructor")
+		points = []float64{}
 	}
 	f := make([]float64, len(points), len(points))
 	copy(f, points)
@@ -27,7 +27,7 @@ func NewDatapoint(data interface{}, points []float64) (*Datapoint, error) {
 		data: data,
 		set:  f,
 	}
-	return &d, nil
+	return &d
 }
 
 // Data returns the interface value of the object that the Datapoint is linked with.
