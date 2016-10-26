@@ -3,6 +3,7 @@ package kdtree
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"sort"
 )
 
@@ -71,9 +72,10 @@ func RandomDatapointInRange(n uint, min, max float64) *Datapoint {
 
 // String returns a formatted string presentation of the Datapoint object,
 // implementing Stringer interface
+// Bug – present, currently assumes data interface{} is a pointer and never a concrete type.
 func (d *Datapoint) String() string {
 	var present string
-	present += fmt.Sprintf("{data: %v}\n", d.data)
+	present += fmt.Sprintf("{data: %v}, ", reflect.Indirect(reflect.ValueOf(d.data)))
 	present += "{set: ["
 	for i := range d.set {
 		present += fmt.Sprintf("%d:{%v}, ", i, d.set[i])
