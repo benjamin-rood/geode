@@ -2,6 +2,29 @@ package kdtree
 
 import "math"
 
+// Convert uses the Importable interface to cleanly produce a kdtree
+// from a slice of some type which has implented ToDataPoint(), and
+// according to the pivot algorithm (PivotFunc).
+func Convert(c []Importable, pivotDef PivotFunc) (*Branch, error) {
+	var points = make(Datapoints, len(c), len(c))
+	// basedim := len(c[0].ToDatapoint().set)
+	for i := range c {
+		points[i] = c[i].ToDatapoint()
+		// TODO:
+		// Implement build error types.
+		// if points[i].Dimensionality() != basedim {
+		// 	return nil, DimClashError
+		// }
+	}
+
+	if pivotDef == nil {
+		pivotDef = LazyAverage
+	}
+
+	b := Build(points, 0, pivotDef)
+	return b, nil
+}
+
 // Distance returns the Euclidean length of the line connecting any two Datapoints
 func Distance(p, q *Datapoint) float64 {
 	return math.Sqrt(DistanceSq(p, q))

@@ -149,42 +149,9 @@ func (ds Datapoints) EqualTo(qs Datapoints) bool {
 	return true
 }
 
-// Importable is the interface implemented by types who can be directly converted into a valid Datapoint.
-type Importable interface {
-	ToDatapoint() *Datapoint
-}
-
-// Exportable is the interface implemented by types which can be take a Datapoint and use the set of floating-point values to update the calling object's data members.
-type Exportable interface {
-	FromDatapoint(*Datapoint)
-}
-
 // Import uses the Importable interface to cleanly append a single Datapoint to a the end of a set (slice) of Datapoints
 func (ds *Datapoints) Import(I Importable) {
 	*ds = append(*ds, I.ToDatapoint())
-}
-
-// Convert uses the Importable interface to cleanly produce a kdtree
-// from a slice of some type which has implented ToDataPoint(), and
-// according to the pivot algorithm (PivotFunc).
-func Convert(c []Importable, pivotDef PivotFunc) (*Branch, error) {
-	var points = make(Datapoints, len(c), len(c))
-	// basedim := len(c[0].ToDatapoint().set)
-	for i := range c {
-		points[i] = c[i].ToDatapoint()
-		// TODO:
-		// Implement build error types.
-		// if points[i].Dimensionality() != basedim {
-		// 	return nil, DimClashError
-		// }
-	}
-
-	if pivotDef == nil {
-		pivotDef = LazyAverage
-	}
-
-	b := Build(points, 0, pivotDef)
-	return b, nil
 }
 
 // MarshalJSON implements encoding/json Marshaler interface
