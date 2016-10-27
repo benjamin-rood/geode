@@ -1,6 +1,7 @@
 package kdtree
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"math/big"
@@ -11,6 +12,25 @@ import (
 type intAndFloat struct {
 	i int
 	f float64
+}
+
+func (inf intAndFloat) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]interface{}{
+		"i": inf.i,
+		"f": inf.f,
+	})
+}
+
+type embedTest struct {
+	s string
+	intAndFloat
+}
+
+func (e embedTest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]interface{}{
+		"s":           e.s,
+		"intAndFloat": e.intAndFloat,
+	})
 }
 
 var (
@@ -33,10 +53,7 @@ var (
 		return
 	}
 
-	embedded = struct {
-		s string
-		intAndFloat
-	}{"hello world", intAndFloat{0, math.E}}
+	embedded = embedTest{"hello world", intAndFloat{0, math.E}}
 
 	rational = big.NewRat(5, 4)
 
@@ -182,36 +199,25 @@ func TestDatapointLinkedDataIdentical(t *testing.T) {
 	for k, ct := range constructorInputs {
 		newDP := NewDatapoint(ct.linked, ct.values)
 		if reflect.DeepEqual(newDP.Data(), interfaces[k]) == false {
-			t.Error(`Datapoint.Data() does not refer to the same object
+			t.Error(k, `: Datapoint.Data() does not refer to the same object
 			got:      `, newDP.Data(), `
 			want:     `, interfaces[k])
 		}
 
-		var fromDp, fromSrc interface{}
 		srcRv := reflect.ValueOf(interfaces[k])
 		dpRv := reflect.ValueOf(newDP.Data())
 
 		if srcRv.Kind() != dpRv.Kind() { //	if they aren't to the same kind, then we have already failed.
-			t.Error(`Datapoint.Data() does not refer to an identical reflect.Kind
+			t.Error(k, `: Datapoint.Data() does not refer to an identical reflect.Kind
 			got:      `, dpRv, `
 			want:     `, srcRv)
 		}
 
-		switch dpRv.Kind() {
-		case reflect.Ptr:
-			fromDp = reflect.Indirect(dpRv)
-			fromSrc = reflect.Indirect(srcRv)
-		case reflect.Invalid:
-			t.Error(`reflect.ValueOf Datapoint.Data() does not refer to an identical reflect.Kind
-			got:      `, dpRv.Kind(), `
-			want:     `, srcRv.Kind())
-		}
+		errStringGot := fmt.Sprint(`got:      `, reflect.TypeOf(newDP.Data()), ` `, dpRv.Interface())
+		errStringWant := fmt.Sprint(`want:     `, reflect.TypeOf(interfaces[k]), ` `, srcRv.Interface())
 
-		errStringGot := fmt.Sprint(`got:      `, fromDp, ` `, dpRv.Interface())
-		errStringWant := fmt.Sprint(`want:     `, fromSrc, ` `, srcRv.Interface())
-
-		if reflect.DeepEqual(fromDp, fromSrc) == false {
-			t.Error(`Datapoint.Data() does not reflect an identical reflect.Value 
+		if reflect.DeepEqual(reflect.TypeOf(newDP.Data()), reflect.TypeOf(interfaces[k])) == false {
+			t.Error(k, `: Datapoint.Data() does not reflect an identical reflect.Type 
 			`, errStringGot, `
 			`, errStringWant)
 		}
@@ -267,4 +273,34 @@ func TestDatapointStringer(t *testing.T) {
 		}
 	}
 
+}
+
+func TestDatapointMarshalJSON(t *testing.T) {
+	for k, ct := range constructorInputs {
+		newDP := NewDatapoint(ct.linked, ct.values)
+		dpJSON, _ := json.Marshal(newDP)
+		var want []byte
+		switch k {
+		case 0:
+			want = []byte(`{"data":"cassandra","set":[6.0000125,6.10000125,-1.3173,1373]}`)
+		case 1:
+			want = []byte(`{"data":"cassandra","set":[6.0000125,6.10000125,-1.3173,1373]}`)
+		case 2:
+			want = []byte(`{"data":"5/4","set":[1,2,3,4,5]}`)
+		case 3:
+			want = []byte(`{"data":"5/4","set":[1,2,3,4,5]}`)
+		case 4:
+			want = []byte(`{"data":{"intAndFloat":{"f":2.718281828459045,"i":0},"s":"hello world"},"set":[100.3]}`)
+		case 5:
+			want = []byte(`{"data":{"intAndFloat":{"f":2.718281828459045,"i":0},"s":"hello world"},"set":[100.3]}`)
+		case 6:
+			want = []byte(`{"data":{"a":97,"b":"banana","c":{"f":3.141592653589793,"i":0}},"set":[0.8050908121798804,0.53238545404102]}`)
+		case 7:
+			want = []byte(`{"data":{"a":97,"b":"banana","c":{"f":3.141592653589793,"i":0}},"set":[0.8050908121798804,0.53238545404102]}`)
+		}
+		if reflect.DeepEqual(dpJSON, want) == false {
+			t.Error(`want: `, string(want), `
+			got: `, string(dpJSON))
+		}
+	}
 }
