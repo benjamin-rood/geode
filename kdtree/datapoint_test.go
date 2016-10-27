@@ -48,7 +48,7 @@ var (
 		"c": intAndFloat{0, math.Pi},
 	}
 
-	interfaces = []interface{}{&str, &rational, &embedded, &mappy}
+	interfaces = []interface{}{&str, str, &rational, rational, &embedded, embedded, &mappy, mappy}
 
 	constructorInputs = []struct {
 		linked interface{}
@@ -59,7 +59,15 @@ var (
 			[]float64{6.0000125, 6.10000125, -1.3173, 1373},
 		},
 		{
+			str,
+			[]float64{6.0000125, 6.10000125, -1.3173, 1373},
+		},
+		{
 			&rational,
+			[]float64{1, 2, 3, 4, 5},
+		},
+		{
+			rational,
 			[]float64{1, 2, 3, 4, 5},
 		},
 		{
@@ -67,7 +75,15 @@ var (
 			[]float64{100.3},
 		},
 		{
+			embedded,
+			[]float64{100.3},
+		},
+		{
 			&mappy,
+			[]float64{0.8050908121798804, 0.53238545404102},
+		},
+		{
+			mappy,
 			[]float64{0.8050908121798804, 0.53238545404102},
 		},
 	}
@@ -171,12 +187,33 @@ func TestDatapointLinkedDataIdentical(t *testing.T) {
 			want:     `, interfaces[k])
 		}
 
-		fromDp := reflect.Indirect(reflect.ValueOf(newDP.Data()))
-		fromSrc := reflect.Indirect(reflect.ValueOf(interfaces[k]))
+		var fromDp, fromSrc interface{}
+		srcRv := reflect.ValueOf(interfaces[k])
+		dpRv := reflect.ValueOf(newDP.Data())
+
+		if srcRv.Kind() != dpRv.Kind() { //	if they aren't to the same kind, then we have already failed.
+			t.Error(`Datapoint.Data() does not refer to an identical reflect.Kind
+			got:      `, dpRv, `
+			want:     `, srcRv)
+		}
+
+		switch dpRv.Kind() {
+		case reflect.Ptr:
+			fromDp = reflect.Indirect(dpRv)
+			fromSrc = reflect.Indirect(srcRv)
+		case reflect.Invalid:
+			t.Error(`reflect.ValueOf Datapoint.Data() does not refer to an identical reflect.Kind
+			got:      `, dpRv.Kind(), `
+			want:     `, srcRv.Kind())
+		}
+
+		errStringGot := fmt.Sprint(`got:      `, fromDp, ` `, dpRv.Interface())
+		errStringWant := fmt.Sprint(`want:     `, fromSrc, ` `, srcRv.Interface())
+
 		if reflect.DeepEqual(fromDp, fromSrc) == false {
-			t.Error(`Datapoint.Data() does not refer to an identical value
-			got:      `, fromDp, `
-			want:     `, fromSrc)
+			t.Error(`Datapoint.Data() does not reflect an identical reflect.Value 
+			`, errStringGot, `
+			`, errStringWant)
 		}
 	}
 }
@@ -191,8 +228,10 @@ func TestDatapointDimensionality(t *testing.T) {
 	}
 
 	for _, dt := range dimTests {
-		if dt.want != dt.dp.Dimensionality() {
-			t.Fail()
+		got := dt.dp.Dimensionality()
+		if got != dt.want {
+			t.Error(`want: `, dt.want, `
+			got: `, got)
 		}
 	}
 }
