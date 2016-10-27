@@ -160,8 +160,8 @@ type Exportable interface {
 }
 
 // Import uses the Importable interface to cleanly append a single Datapoint to a the end of a set (slice) of Datapoints
-func (ds Datapoints) Import(I Importable) {
-	ds = append(ds, I.ToDatapoint())
+func (ds *Datapoints) Import(I Importable) {
+	*ds = append(*ds, I.ToDatapoint())
 }
 
 // Convert uses the Importable interface to cleanly produce a kdtree
