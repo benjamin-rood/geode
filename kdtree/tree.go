@@ -124,7 +124,7 @@ func areaN(branch *Branch, target *Datapoint, granularity int) Datapoints {
 }
 
 // NN returns the **exact** nearest-neighbouring Datapoint in the k-d tree branch.
-// As the process is approximately 3X slower than ANN, unless you explictly require
+// As the process is approximately 3X slower than ANN, unless you explicitly require
 // the exact nearest nerighbour to the target, use ANN instead in most cases.
 func NN(branch *Branch, target *Datapoint) *Datapoint {
 	bin := areaN(branch, target, 10)
