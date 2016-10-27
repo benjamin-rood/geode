@@ -304,3 +304,73 @@ func TestDatapointMarshalJSON(t *testing.T) {
 		}
 	}
 }
+
+type char rune
+
+func (c *char) ToDatapoint() *Datapoint {
+	return &Datapoint{c, []float64{float64(*c) / 10.0, float64(*c) / 100.0}}
+}
+
+type myString string
+
+func (str *myString) ToDatapoint() *Datapoint {
+	var d Datapoint
+	d.data = str
+	var f []float64
+	for _, s := range *str {
+		f = append(f, math.Pi/float64(s))
+	}
+	d.set = f
+	return &d
+}
+
+func TestImportableInterface1(t *testing.T) {
+	A := char('a')
+	B := char('b')
+	S := myString("Hello!")
+	importTests := []struct {
+		imp  Importable
+		want *Datapoint
+	}{
+		{
+			imp:  &A,
+			want: &Datapoint{&A, []float64{9.7, 0.97}},
+		},
+		{
+			imp:  &B,
+			want: &Datapoint{&B, []float64{9.8, 0.98}},
+		},
+		{
+			imp:  &S,
+			want: &Datapoint{&S, []float64{0.04363323129985824, 0.031104877758314782, 0.02908882086657216, 0.02908882086657216, 0.028302636518826967, 0.09519977738150888}},
+		},
+	}
+
+	var dps Datapoints
+
+	for k, it := range importTests {
+		dps.Import(it.imp)
+		if len(dps) != k+1 {
+			t.Fail()
+		}
+		if reflect.DeepEqual(dps[k], it.want) == false {
+			t.Error(`got: `, dps[k], `
+		want: `, it.want)
+		}
+		if reflect.DeepEqual(reflect.TypeOf(dps[k].Data()), reflect.TypeOf(it.want.Data())) == false {
+			t.Fail()
+		}
+
+		dpsRv := reflect.ValueOf(dps[k].Data())
+		itwRv := reflect.ValueOf(it.want.Data())
+		if reflect.DeepEqual(dpsRv, itwRv) == false {
+			t.Errorf("\ngot:\t%v\nwant:\t%v\n", dpsRv, itwRv)
+		}
+		if reflect.DeepEqual(reflect.Indirect(dpsRv), reflect.Indirect(itwRv)) == false {
+			t.Errorf("\ngot:\t%v\nwant:\t%v\n", reflect.Indirect(dpsRv), reflect.Indirect(itwRv))
+		}
+		if reflect.Indirect(dpsRv).CanSet() == false {
+			t.Fail()
+		}
+	}
+}
