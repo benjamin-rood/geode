@@ -1,5 +1,7 @@
 package kdtree
 
+import "encoding/json"
+
 // Branch is a Binary Tree Node
 type Branch struct {
 	Datapoints
@@ -43,18 +45,22 @@ var (
 	}
 )
 
-// Build constructs the k-d tree from a set of assumed to be valid Datapoints,
-// using a provided PivotFunc algorithm
+// Build constructs the k-d tree from a set of assumed to be valid Datapoints
+// OF CONSISTENT DIMENSIONALITY, using a provided PivotFunc algorithm
 func Build(ds Datapoints, depth int, pivotDef PivotFunc) *Branch {
+	if pivotDef == nil {
+		pivotDef = LazyAverage
+	}
 	branch := Branch{
 		Datapoints: ds,
 		pivot:      0,
+		depth:      depth,
 		left:       nil,
 		right:      nil,
 	}
 	sz := len(ds)
 	if sz <= 1 {
-		return &branch
+		return &Branch{ds[:1], 0, depth, nil, nil}
 	}
 
 	dimensionality := len(ds[0].set)
@@ -187,4 +193,16 @@ func RangeQuery(branch *Branch, bounds []Range) Datapoints {
 	rangeSet = append(rangeSet, leftSet...)
 	rangeSet = append(rangeSet, rightSet...)
 	return rangeSet
+}
+
+// MarshalJSON implements json.Marshaler interface
+func (b *Branch) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]interface{}{
+		"Depth":       b.depth,
+		"Cardinality": len(b.Datapoints),
+		"Datapoints":  b.Datapoints,
+		"Pivot":       b.pivot,
+		"leftChild":   b.left,
+		"rightChild":  b.right,
+	})
 }
