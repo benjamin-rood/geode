@@ -26,10 +26,10 @@ type embedTest struct {
 	intAndFloat
 }
 
-func (e embedTest) MarshalJSON() ([]byte, error) {
+func (emb embedTest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
-		"s":           e.s,
-		"intAndFloat": e.intAndFloat,
+		"s":           emb.s,
+		"intAndFloat": emb.intAndFloat,
 	})
 }
 
@@ -106,7 +106,7 @@ var (
 	}
 )
 
-func TestDatapointConstructor(t *testing.T) {
+func Test_Datapoint_Constructor(t *testing.T) {
 	constructorTests := []struct {
 		dp         *Datapoint
 		wantData   interface{}
@@ -144,7 +144,7 @@ func TestDatapointConstructor(t *testing.T) {
 	}
 }
 
-func TestDatapointSetCopy(t *testing.T) {
+func Test_Datapoint_Set_Copy(t *testing.T) {
 
 	var randomPoints Datapoints
 	for i := uint(1); i <= 10; i++ {
@@ -195,7 +195,7 @@ func TestDatapointSetCopy(t *testing.T) {
 	}
 }
 
-func TestDatapointLinkedDataIdentical(t *testing.T) {
+func Test_Datapoint_Linked_Data_Identical(t *testing.T) {
 	for k, ct := range constructorInputs {
 		newDP := NewDatapoint(ct.linked, ct.values)
 		if reflect.DeepEqual(newDP.Data(), interfaces[k]) == false {
@@ -224,7 +224,7 @@ func TestDatapointLinkedDataIdentical(t *testing.T) {
 	}
 }
 
-func TestDatapointDimensionality(t *testing.T) {
+func Test_Datapoint_Dimensionality(t *testing.T) {
 	var dimTests = []struct {
 		dp   *Datapoint
 		want int
@@ -242,7 +242,7 @@ func TestDatapointDimensionality(t *testing.T) {
 	}
 }
 
-func TestDatapointStringer(t *testing.T) {
+func Test_Datapoint_Stringer(t *testing.T) {
 	dpStringStr := `{data: cassandra}, {set: [0:{6.0000125}, 1:{6.10000125}, 2:{-1.3173}, 3:{1373}]}`
 	dpRationalStr := `{data: &{{false [5]} {false [4]}}}, {set: [0:{1}, 1:{2}, 2:{3}, 3:{4}, 4:{5}]}`
 	var stringerTests = []struct {
@@ -275,7 +275,7 @@ func TestDatapointStringer(t *testing.T) {
 
 }
 
-func TestDatapointMarshalJSON(t *testing.T) {
+func Test_Datapoint_MarshalJSON(t *testing.T) {
 	for k, ct := range constructorInputs {
 		newDP := NewDatapoint(ct.linked, ct.values)
 		dpJSON, _ := json.Marshal(newDP)
@@ -324,10 +324,25 @@ func (str *myString) ToDatapoint() *Datapoint {
 	return &d
 }
 
-func TestImportableInterface1(t *testing.T) {
+func (emb *embedTest) ToDatapoint() *Datapoint {
+	var d Datapoint
+	d.data = emb
+	var f []float64
+	inf := emb.intAndFloat
+	for _, s := range emb.s {
+		f = append(f, float64(s))
+	}
+	f = append(f, float64(inf.i))
+	f = append(f, inf.f)
+	d.set = f
+	return &d
+}
+
+func Test_Datapoints_Import_with_Importable_Interface(t *testing.T) {
 	A := char('a')
 	B := char('b')
 	S := myString("Hello!")
+	E := embedTest{"Aloha!", intAndFloat{i: 1, f: math.Log2E}}
 	importTests := []struct {
 		imp  Importable
 		want *Datapoint
@@ -343,6 +358,10 @@ func TestImportableInterface1(t *testing.T) {
 		{
 			imp:  &S,
 			want: &Datapoint{&S, []float64{0.04363323129985824, 0.031104877758314782, 0.02908882086657216, 0.02908882086657216, 0.028302636518826967, 0.09519977738150888}},
+		},
+		{
+			imp:  &E,
+			want: &Datapoint{&E, []float64{65, 108, 111, 104, 97, 33, 1, 1.4426950408889634}},
 		},
 	}
 

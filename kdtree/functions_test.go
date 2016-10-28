@@ -25,7 +25,7 @@ var (
 	}
 )
 
-func TestFuncEuclieanDistanceBtwnDatapoints(t *testing.T) {
+func Test_Func_Eucliean_Distance_Btwn_Datapoints(t *testing.T) {
 	euclideanTests := pointPairs
 	euclideanTests[0].want = math.Sqrt(0*0 + 1*1)
 	euclideanTests[1].want = math.Sqrt(math.Pow((-2-3), 2) + math.Pow((7.5-3), 2) + math.Pow((0.125-3), 2))
@@ -40,7 +40,7 @@ func TestFuncEuclieanDistanceBtwnDatapoints(t *testing.T) {
 
 }
 
-func TestFuncSquaredDistanceBtwnDatapoints(t *testing.T) {
+func Test_Func_Squared_Distance_Btwn_Datapoints(t *testing.T) {
 	squaredTests := pointPairs
 	squaredTests[0].want = 0*0 + 1*1
 	squaredTests[1].want = math.Pow((-2-3), 2) + math.Pow((7.5-3), 2) + math.Pow((0.125-3), 2)

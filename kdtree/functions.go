@@ -12,6 +12,7 @@ func Convert(c []Importable, pivotDef PivotFunc) (*Branch, error) {
 		points[i] = c[i].ToDatapoint()
 		// TODO:
 		// Implement build error types.
+		// e.g.
 		// if points[i].Dimensionality() != basedim {
 		// 	return nil, DimClashError
 		// }
