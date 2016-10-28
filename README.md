@@ -2,6 +2,9 @@
 
 [![Travis CI build status](https://travis-ci.org/benjamin-rood/geode.svg?branch=master)](https://travis-ci.org/benjamin-rood/geode) [![Go Report Card](https://goreportcard.com/badge/github.com/benjamin-rood/geode)](https://goreportcard.com/report/github.com/benjamin-rood/geode)
 
+
+![GEODE](/img/geode.png)
+
 <br>
 A collection of Geometric Data Structures and accompanying Algorithms written entirely in *Go*.
 
