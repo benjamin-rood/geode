@@ -1,6 +1,6 @@
 # Geode
 
-[![Travis CI build status](https://travis-ci.org/benjamin-rood/geode.svg?branch=master)](https://travis-ci.org/benjamin-rood/geode) [![Go Report Card](https://goreportcard.com/badge/github.com/benjamin-rood/geode)](https://goreportcard.com/report/github.com/benjamin-rood/geode)
+[![Travis CI build status](https://travis-ci.org/benjamin-rood/geode.svg?branch=master)](https://travis-ci.org/benjamin-rood/geode) [![Go Report Card](https://goreportcard.com/badge/github.com/benjamin-rood/geode)](https://goreportcard.com/report/github.com/benjamin-rood/geode) [![Coverage Status](https://coveralls.io/repos/github/benjamin-rood/geode/badge.svg?branch=master)](https://coveralls.io/github/benjamin-rood/geode?branch=master)
 
 
 ![GEODE](/img/geode.png)
