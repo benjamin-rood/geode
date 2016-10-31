@@ -172,7 +172,8 @@ func (ds *Datapoints) PointsSetString() string {
 	for _, d := range *ds {
 		pss += (d.setString() + " ")
 	}
-	pss += `}`
+
+	pss = pss[:len(pss)-1] + `}`
 	return pss
 }
 

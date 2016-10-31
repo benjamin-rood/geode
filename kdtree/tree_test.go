@@ -32,6 +32,18 @@ var (
 		&Datapoint{nil, []float64{rand.Float64(), rand.Float64()}},
 		&Datapoint{nil, []float64{rand.Float64(), rand.Float64()}},
 	}
+	dps3 = Datapoints{
+		&Datapoint{nil, []float64{1, 9}},
+		&Datapoint{nil, []float64{2, 3}},
+		&Datapoint{nil, []float64{4, 1}},
+		&Datapoint{nil, []float64{3, 7}},
+		&Datapoint{nil, []float64{5, 4}},
+		&Datapoint{nil, []float64{6, 8}},
+		&Datapoint{nil, []float64{7, 2}},
+		&Datapoint{nil, []float64{8, 8}},
+		&Datapoint{nil, []float64{7, 9}},
+		&Datapoint{nil, []float64{9, 6}},
+	}
 )
 
 func Test_Branch_json_Marshaller_Interface(t *testing.T) {
@@ -44,5 +56,36 @@ func Test_Branch_json_Marshaller_Interface(t *testing.T) {
 	jsonTree, _ = json.Marshal(tree)
 	if string(jsonTree) != jsonDps2MedianStr {
 		t.Error(string(jsonTree))
+	}
+}
+
+func Test_Branch_MaxDepth(t *testing.T) {
+	tree := Build(dps1, 0, nil)
+	want := 3
+	got := tree.MaxDepth()
+	if got != want {
+		t.Error(`want: `, want, `
+		got: `, got)
+	}
+}
+
+func Test_Branch_Build_Pivot_Mean(t *testing.T) {
+	tree := Build(dps3, 0, Mean)
+	want := []byte(`{"depth=0 (pivots)":"{5.2}","depth=1 (pivots)":"{4.8, 6.6}","depth=2 (pivots)":"{3.6666666666666665, 2, 8, 7}","depth=3 (pivots)":"{0, 2.5, 0, 0, 0, 0, 0, 8.5}","depth=4 (pivots)":"{0, 0, 0, 0}","leaves":"{(2, 3) (4, 1) (5, 4) (1, 9) (3, 7) (7, 2) (9, 6) (6, 8) (8, 8) (7, 9)}"}`)
+	gotRaw := breadthFirstSearchPivotsList(tree)
+	got, _ := json.Marshal(gotRaw)
+	if string(got) != string(want) {
+		t.Error(`want: `, string(want), `
+		got: `, string(got))
+	}
+}
+func Test_Branch_Build_Pivot_LazyMedian(t *testing.T) {
+	tree := Build(dps3, 0, LazyMedian)
+	want := []byte(`{"depth=0 (pivots)":"{6}","depth=1 (pivots)":"{4, 8}","depth=2 (pivots)":"{4, 3, 9, 7}","depth=3 (pivots)":"{0, 0, 0, 7, 0, 0, 0, 9}","depth=4 (pivots)":"{0, 0, 0, 0}","leaves":"{(2, 3) (4, 1) (1, 9) (5, 4) (3, 7) (7, 2) (9, 6) (6, 8) (8, 8) (7, 9)}"}`)
+	gotRaw := breadthFirstSearchPivotsList(tree)
+	got, _ := json.Marshal(gotRaw)
+	if string(got) != string(want) {
+		t.Error(`want: `, string(want), `
+		got: `, string(got))
 	}
 }

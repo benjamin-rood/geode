@@ -48,7 +48,7 @@ func branchToStrMatrix(branch *Branch) [][]string {
 	return matrix
 }
 
-type pivotList map[int][]string
+type pivotList map[int]string
 
 func (pL pivotList) MarshalJSON() ([]byte, error) {
 	max := 0
@@ -77,7 +77,10 @@ func breadthFirstSearchPivotsList(branch *Branch) pivotList {
 	queue = append(queue, b) // add root to queue tail
 	for len(queue) != 0 {
 		b, queue = queue[0], queue[1:] // pop head
-		pL[b.depth] = append(pL[b.depth], fmt.Sprint(b.pivot))
+		if _, exists := pL[b.depth]; !exists {
+			pL[b.depth] = "{"
+		}
+		pL[b.depth] += (fmt.Sprint(b.pivot) + ", ")
 		if b.left != nil {
 			queue = append(queue, *b.left) // add to tail
 		}
@@ -85,13 +88,12 @@ func breadthFirstSearchPivotsList(branch *Branch) pivotList {
 			queue = append(queue, *b.right) // add to tail
 		}
 	}
-
-	pL[md] = []string{}
-	dsQ := depthFirstSearchLeavesOnly(branch)
-
-	for _, d := range dsQ {
-		pL[md] = append(pL[md], d.setString())
+	for key, value := range pL {
+		pL[key] = (value[:len(value)-2] + "}")
 	}
+
+	dsQ := depthFirstSearchLeavesOnly(branch)
+	pL[md] = dsQ.PointsSetString()
 	return pL
 }
 
