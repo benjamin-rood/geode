@@ -24,8 +24,8 @@ var (
 		return pivot
 	}
 
-	// LazyMedian implements a median split on an unordered set for the pivot value
-	LazyMedian = func(ds Datapoints, axis int) float64 {
+	// LazySplit implements a middle split on an unsorted set for the pivot value
+	LazySplit = func(ds Datapoints, axis int) float64 {
 		midpoint := len(ds) / 2
 		return ds[midpoint].set[axis]
 	}
@@ -48,19 +48,19 @@ var (
 // Build constructs the k-d tree from a set of assumed to be valid Datapoints
 // OF CONSISTENT DIMENSIONALITY, using a provided PivotFunc algorithm
 func Build(ds Datapoints, depth int, pivotDef PivotFunc) *Branch {
+	if ds == nil {
+		return nil
+	}
 	if pivotDef == nil {
 		pivotDef = LazyAverage
 	}
+
 	branch := Branch{
 		Datapoints: ds,
 		pivot:      0,
 		depth:      depth,
 		left:       nil,
 		right:      nil,
-	}
-
-	if branch.Datapoints == nil {
-		return &branch
 	}
 
 	sz := len(branch.Datapoints)
@@ -70,8 +70,8 @@ func Build(ds Datapoints, depth int, pivotDef PivotFunc) *Branch {
 
 	dimensionality := len(branch.Datapoints[0].set)
 	axis := depth % dimensionality
-	By(Comparator(axis)).Sort(branch.Datapoints)
 	branch.pivot = pivotDef(branch.Datapoints, axis)
+
 	var leftSet, rightSet Datapoints
 
 	for i := range branch.Datapoints {

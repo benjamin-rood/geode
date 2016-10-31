@@ -98,21 +98,24 @@ func breadthFirstSearchPivotsList(branch *Branch) pivotList {
 }
 
 func depthFirstSearchLeavesOnly(branch *Branch) Datapoints {
-	var dsQ Datapoints  // LIFO queue
-	stack := []Branch{} // FIFO
-	b := *branch
+	var dsQ Datapoints   // LIFO queue
+	stack := []*Branch{} // FIFO
+	b := branch
 	stack = append(stack, b)
 	for len(stack) != 0 {
 		b, stack = stack[len(stack)-1], stack[:len(stack)-1] // pop
+		if b == nil {
+			continue
+		}
 		if b.left == nil && b.right == nil {
 			temp := Datapoints{b.Datapoints[0]}
 			dsQ = append(temp, dsQ...) // append to front
 		} else {
 			if b.left != nil {
-				stack = append(stack, *b.left)
+				stack = append(stack, b.left)
 			}
 			if b.right != nil {
-				stack = append(stack, *b.right)
+				stack = append(stack, b.right)
 			}
 		}
 	}

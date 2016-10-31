@@ -46,7 +46,7 @@ var (
 	}
 )
 
-func Test_Branch_json_Marshaller_Interface(t *testing.T) {
+func Test_Tree_Branch_json_Marshaller_Interface(t *testing.T) {
 	tree := Build(dps1, 0, Median)
 	jsonTree, _ := json.Marshal(tree)
 	if string(jsonTree) != jsonDps1MedianStr {
@@ -59,7 +59,7 @@ func Test_Branch_json_Marshaller_Interface(t *testing.T) {
 	}
 }
 
-func Test_Branch_MaxDepth(t *testing.T) {
+func Test_Tree_Branch_MaxDepth(t *testing.T) {
 	tree := Build(dps1, 0, nil)
 	want := 3
 	got := tree.MaxDepth()
@@ -69,7 +69,7 @@ func Test_Branch_MaxDepth(t *testing.T) {
 	}
 }
 
-func Test_Branch_Build_Pivot_Mean(t *testing.T) {
+func Test_Tree_Branch_Build_Pivot_Mean(t *testing.T) {
 	tree := Build(dps3, 0, Mean)
 	want := []byte(`{"depth=0 (pivots)":"{5.2}","depth=1 (pivots)":"{4.8, 6.6}","depth=2 (pivots)":"{3.6666666666666665, 2, 8, 7}","depth=3 (pivots)":"{0, 2.5, 0, 0, 0, 0, 0, 8.5}","depth=4 (pivots)":"{0, 0, 0, 0}","leaves":"{(2, 3) (4, 1) (5, 4) (1, 9) (3, 7) (7, 2) (9, 6) (6, 8) (8, 8) (7, 9)}"}`)
 	gotRaw := breadthFirstSearchPivotsList(tree)
@@ -79,9 +79,32 @@ func Test_Branch_Build_Pivot_Mean(t *testing.T) {
 		got: `, string(got))
 	}
 }
-func Test_Branch_Build_Pivot_LazyMedian(t *testing.T) {
-	tree := Build(dps3, 0, LazyMedian)
+
+func Test_Tree_Branch_Build_Pivot_Median(t *testing.T) {
+	tree := Build(dps3, 0, Median)
 	want := []byte(`{"depth=0 (pivots)":"{6}","depth=1 (pivots)":"{4, 8}","depth=2 (pivots)":"{4, 3, 9, 7}","depth=3 (pivots)":"{0, 0, 0, 7, 0, 0, 0, 9}","depth=4 (pivots)":"{0, 0, 0, 0}","leaves":"{(2, 3) (4, 1) (1, 9) (5, 4) (3, 7) (7, 2) (9, 6) (6, 8) (8, 8) (7, 9)}"}`)
+	gotRaw := breadthFirstSearchPivotsList(tree)
+	got, _ := json.Marshal(gotRaw)
+	if string(got) != string(want) {
+		t.Error(`want: `, string(want), `
+		got: `, string(got))
+	}
+}
+
+func Test_Tree_Branch_Build_Pivot_LazySplit(t *testing.T) {
+	tree := Build(dps3, 0, LazySplit)
+	want := []byte(`{"depth=0 (pivots)":"{6}","depth=1 (pivots)":"{7, 9}","depth=2 (pivots)":"{4, 3, 8, 0}","depth=3 (pivots)":"{0, 4, 0, 0, 2, 6}","depth=4 (pivots)":"{0, 0, 7, 9}","depth=5 (pivots)":"{0, 0, 0, 0}","leaves":"{(2, 3) (4, 1) (5, 4) (1, 9) (3, 7) (6, 8) (7, 2) (8, 8) (9, 6) (7, 9)}"}`)
+	gotRaw := breadthFirstSearchPivotsList(tree)
+	got, _ := json.Marshal(gotRaw)
+	if string(got) != string(want) {
+		t.Error(`want: `, string(want), `
+		got: `, string(got))
+	}
+}
+
+func Test_Tree_Branch_Build_Pivot_LazyAverage(t *testing.T) {
+	tree := Build(dps3, 0, LazyAverage)
+	want := []byte(`{"depth=0 (pivots)":"{5}","depth=1 (pivots)":"{5, 5}","depth=2 (pivots)":"{3, 2, 6, 7.5}","depth=3 (pivots)":"{0, 0, 0, 0, 0, 0, 8.5, 7}","depth=4 (pivots)":"{0, 0, 0, 0}","leaves":"{(2, 3) (4, 1) (1, 9) (3, 7) (5, 4) (7, 2) (6, 8) (7, 9) (9, 6) (8, 8)}"}`)
 	gotRaw := breadthFirstSearchPivotsList(tree)
 	got, _ := json.Marshal(gotRaw)
 	if string(got) != string(want) {
