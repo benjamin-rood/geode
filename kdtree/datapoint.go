@@ -164,6 +164,18 @@ func (ds *Datapoints) Import(I Importable) {
 	*ds = append(*ds, I.ToDatapoint())
 }
 
+// PointsSetString returns a concatenated presentation of each Datapoint set as a single set presentation.
+// e.g. `{(1,2) (3,4) (5,6) (7,8)}`
+// possibly should be internal only?
+func (ds *Datapoints) PointsSetString() string {
+	pss := `{`
+	for _, d := range *ds {
+		pss += (d.setString() + " ")
+	}
+	pss += `}`
+	return pss
+}
+
 // MarshalJSON implements encoding/json Marshaler interface
 func (d *Datapoint) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
