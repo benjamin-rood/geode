@@ -58,29 +58,41 @@ func Build(ds Datapoints, depth int, pivotDef PivotFunc) *Branch {
 		left:       nil,
 		right:      nil,
 	}
-	sz := len(ds)
-	if sz <= 1 {
-		return &Branch{ds[:1], 0, depth, nil, nil}
+
+	if branch.Datapoints == nil {
+		return &branch
 	}
 
-	dimensionality := len(ds[0].set)
+	sz := len(branch.Datapoints)
+	if sz <= 1 {
+		return &Branch{branch.Datapoints[:1], 0, depth, nil, nil}
+	}
+
+	dimensionality := len(branch.Datapoints[0].set)
 	axis := depth % dimensionality
-
-	branch.pivot = pivotDef(ds, axis)
-
+	By(Comparator(axis)).Sort(branch.Datapoints)
+	branch.pivot = pivotDef(branch.Datapoints, axis)
 	var leftSet, rightSet Datapoints
 
-	for i := range ds {
-		if ds[i].set[axis] < branch.pivot {
-			leftSet = append(leftSet, ds[i])
+	for i := range branch.Datapoints {
+		if branch.Datapoints[i].set[axis] < branch.pivot {
+			leftSet = append(leftSet, branch.Datapoints[i])
 		} else {
-			rightSet = append(rightSet, ds[i])
+			rightSet = append(rightSet, branch.Datapoints[i])
 		}
 	}
 
 	branch.left = Build(leftSet, depth+1, pivotDef)
 	branch.right = Build(rightSet, depth+1, pivotDef)
 	return &branch
+}
+
+// MaxDepth returns the depth of the deepest leaf node from the input branch as 'root'
+func (branch *Branch) MaxDepth() int {
+	if branch == nil {
+		return 0
+	}
+	return max(branch.depth, max(branch.left.MaxDepth(), branch.right.MaxDepth()))
 }
 
 // ANN will very rapidly return the **approximate nearest neighbour** Datapoint
@@ -196,13 +208,13 @@ func RangeQuery(branch *Branch, bounds []Range) Datapoints {
 }
 
 // MarshalJSON implements json.Marshaler interface
-func (b *Branch) MarshalJSON() ([]byte, error) {
+func (branch *Branch) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
-		"Depth":       b.depth,
-		"Cardinality": len(b.Datapoints),
-		"Datapoints":  b.Datapoints,
-		"Pivot":       b.pivot,
-		"leftChild":   b.left,
-		"rightChild":  b.right,
+		"Depth":       branch.depth,
+		"Cardinality": len(branch.Datapoints),
+		"Datapoints":  branch.Datapoints,
+		"Pivot":       branch.pivot,
+		"leftChild":   branch.left,
+		"rightChild":  branch.right,
 	})
 }

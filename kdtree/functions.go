@@ -5,7 +5,7 @@ import "math"
 // Convert uses the Importable interface to cleanly produce a kdtree
 // from a slice of some type which has implented ToDataPoint(), and
 // according to the pivot algorithm (PivotFunc).
-func Convert(c []Importable, pivotDef PivotFunc) (*Branch, error) {
+func Convert(c []Importable, sorting bool, pivotDef PivotFunc) (*Branch, error) {
 	var points = make(Datapoints, len(c), len(c))
 	// basedim := len(c[0].ToDatapoint().set)
 	for i := range c {

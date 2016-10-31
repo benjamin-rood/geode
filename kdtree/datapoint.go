@@ -70,6 +70,16 @@ func RandomDatapointInRange(n uint, min, max float64) *Datapoint {
 	return &d
 }
 
+func (d *Datapoint) setString() string {
+	pointString := "("
+	for _, f := range d.set {
+		pointString += fmt.Sprint(f, ", ")
+	}
+	pointString = pointString[:len(pointString)-2]
+	pointString += ")"
+	return pointString
+}
+
 // String returns a formatted string presentation of the Datapoint object,
 // implementing Stringer interface
 // Bug – present, currently assumes data interface{} is a pointer and never a concrete type.
