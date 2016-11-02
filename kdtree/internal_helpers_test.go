@@ -1,9 +1,6 @@
 package kdtree
 
-import (
-	"math/rand"
-	"testing"
-)
+import "testing"
 
 func Test_Helpers_SumFloats(t *testing.T) {
 	sumTests := []struct {
@@ -55,8 +52,8 @@ func Test_Helpers_SumFloats(t *testing.T) {
 }
 
 func Test_Helpers_datapoint_setString(t *testing.T) {
-	d := &Datapoint{nil, []float64{rand.Float64(), rand.Float64()}}
-	want := `(0.7558235074915978, 0.40380328579570035)`
+	d := &Datapoint{nil, []float64{0.6227283173637045, 0.3696928436398219}}
+	want := `(0.6227283173637045, 0.3696928436398219)`
 	got := d.setString()
 	if got != want {
 		t.Error(`want: `, string(want), `

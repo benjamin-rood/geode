@@ -1,0 +1,519 @@
+{
+    "Cardinality": 11,
+    "Datapoints": [
+        {
+            "data": null,
+            "set": [
+                0.06563701921747622,
+                0.15651925473279124
+            ]
+        },
+        {
+            "data": null,
+            "set": [
+                0.09696951891448456,
+                0.30091186058528707
+            ]
+        },
+        {
+            "data": null,
+            "set": [
+                0.20318687664732285,
+                0.360871416856906
+            ]
+        },
+        {
+            "data": null,
+            "set": [
+                0.21426387258237492,
+                0.380657189299686
+            ]
+        },
+        {
+            "data": null,
+            "set": [
+                0.28303415118044517,
+                0.29310185733681576
+            ]
+        },
+        {
+            "data": null,
+            "set": [
+                0.31805817433032985,
+                0.4688898449024232
+            ]
+        },
+        {
+            "data": null,
+            "set": [
+                0.4246374970712657,
+                0.6868230728671094
+            ]
+        },
+        {
+            "data": null,
+            "set": [
+                0.5152126285020654,
+                0.8136399609900968
+            ]
+        },
+        {
+            "data": null,
+            "set": [
+                0.6046602879796196,
+                0.9405090880450124
+            ]
+        },
+        {
+            "data": null,
+            "set": [
+                0.6645600532184904,
+                0.4377141871869802
+            ]
+        },
+        {
+            "data": null,
+            "set": [
+                0.6790846759202163,
+                0.21855305259276428
+            ]
+        }
+    ],
+    "Depth": 0,
+    "Pivot": 0.31805817433032985,
+    "leftChild": {
+        "Cardinality": 5,
+        "Datapoints": [
+            {
+                "data": null,
+                "set": [
+                    0.06563701921747622,
+                    0.15651925473279124
+                ]
+            },
+            {
+                "data": null,
+                "set": [
+                    0.28303415118044517,
+                    0.29310185733681576
+                ]
+            },
+            {
+                "data": null,
+                "set": [
+                    0.09696951891448456,
+                    0.30091186058528707
+                ]
+            },
+            {
+                "data": null,
+                "set": [
+                    0.20318687664732285,
+                    0.360871416856906
+                ]
+            },
+            {
+                "data": null,
+                "set": [
+                    0.21426387258237492,
+                    0.380657189299686
+                ]
+            }
+        ],
+        "Depth": 1,
+        "Pivot": 0.30091186058528707,
+        "leftChild": {
+            "Cardinality": 2,
+            "Datapoints": [
+                {
+                    "data": null,
+                    "set": [
+                        0.06563701921747622,
+                        0.15651925473279124
+                    ]
+                },
+                {
+                    "data": null,
+                    "set": [
+                        0.28303415118044517,
+                        0.29310185733681576
+                    ]
+                }
+            ],
+            "Depth": 2,
+            "Pivot": 0.28303415118044517,
+            "leftChild": {
+                "Cardinality": 1,
+                "Datapoints": [
+                    {
+                        "data": null,
+                        "set": [
+                            0.06563701921747622,
+                            0.15651925473279124
+                        ]
+                    }
+                ],
+                "Depth": 3,
+                "Pivot": 0,
+                "leftChild": null,
+                "rightChild": null
+            },
+            "rightChild": {
+                "Cardinality": 1,
+                "Datapoints": [
+                    {
+                        "data": null,
+                        "set": [
+                            0.28303415118044517,
+                            0.29310185733681576
+                        ]
+                    }
+                ],
+                "Depth": 3,
+                "Pivot": 0,
+                "leftChild": null,
+                "rightChild": null
+            }
+        },
+        "rightChild": {
+            "Cardinality": 3,
+            "Datapoints": [
+                {
+                    "data": null,
+                    "set": [
+                        0.09696951891448456,
+                        0.30091186058528707
+                    ]
+                },
+                {
+                    "data": null,
+                    "set": [
+                        0.20318687664732285,
+                        0.360871416856906
+                    ]
+                },
+                {
+                    "data": null,
+                    "set": [
+                        0.21426387258237492,
+                        0.380657189299686
+                    ]
+                }
+            ],
+            "Depth": 2,
+            "Pivot": 0.20318687664732285,
+            "leftChild": {
+                "Cardinality": 1,
+                "Datapoints": [
+                    {
+                        "data": null,
+                        "set": [
+                            0.09696951891448456,
+                            0.30091186058528707
+                        ]
+                    }
+                ],
+                "Depth": 3,
+                "Pivot": 0,
+                "leftChild": null,
+                "rightChild": null
+            },
+            "rightChild": {
+                "Cardinality": 2,
+                "Datapoints": [
+                    {
+                        "data": null,
+                        "set": [
+                            0.20318687664732285,
+                            0.360871416856906
+                        ]
+                    },
+                    {
+                        "data": null,
+                        "set": [
+                            0.21426387258237492,
+                            0.380657189299686
+                        ]
+                    }
+                ],
+                "Depth": 3,
+                "Pivot": 0.380657189299686,
+                "leftChild": {
+                    "Cardinality": 1,
+                    "Datapoints": [
+                        {
+                            "data": null,
+                            "set": [
+                                0.20318687664732285,
+                                0.360871416856906
+                            ]
+                        }
+                    ],
+                    "Depth": 4,
+                    "Pivot": 0,
+                    "leftChild": null,
+                    "rightChild": null
+                },
+                "rightChild": {
+                    "Cardinality": 1,
+                    "Datapoints": [
+                        {
+                            "data": null,
+                            "set": [
+                                0.21426387258237492,
+                                0.380657189299686
+                            ]
+                        }
+                    ],
+                    "Depth": 4,
+                    "Pivot": 0,
+                    "leftChild": null,
+                    "rightChild": null
+                }
+            }
+        }
+    },
+    "rightChild": {
+        "Cardinality": 6,
+        "Datapoints": [
+            {
+                "data": null,
+                "set": [
+                    0.6790846759202163,
+                    0.21855305259276428
+                ]
+            },
+            {
+                "data": null,
+                "set": [
+                    0.6645600532184904,
+                    0.4377141871869802
+                ]
+            },
+            {
+                "data": null,
+                "set": [
+                    0.31805817433032985,
+                    0.4688898449024232
+                ]
+            },
+            {
+                "data": null,
+                "set": [
+                    0.4246374970712657,
+                    0.6868230728671094
+                ]
+            },
+            {
+                "data": null,
+                "set": [
+                    0.5152126285020654,
+                    0.8136399609900968
+                ]
+            },
+            {
+                "data": null,
+                "set": [
+                    0.6046602879796196,
+                    0.9405090880450124
+                ]
+            }
+        ],
+        "Depth": 1,
+        "Pivot": 0.6868230728671094,
+        "leftChild": {
+            "Cardinality": 3,
+            "Datapoints": [
+                {
+                    "data": null,
+                    "set": [
+                        0.31805817433032985,
+                        0.4688898449024232
+                    ]
+                },
+                {
+                    "data": null,
+                    "set": [
+                        0.6645600532184904,
+                        0.4377141871869802
+                    ]
+                },
+                {
+                    "data": null,
+                    "set": [
+                        0.6790846759202163,
+                        0.21855305259276428
+                    ]
+                }
+            ],
+            "Depth": 2,
+            "Pivot": 0.6645600532184904,
+            "leftChild": {
+                "Cardinality": 1,
+                "Datapoints": [
+                    {
+                        "data": null,
+                        "set": [
+                            0.31805817433032985,
+                            0.4688898449024232
+                        ]
+                    }
+                ],
+                "Depth": 3,
+                "Pivot": 0,
+                "leftChild": null,
+                "rightChild": null
+            },
+            "rightChild": {
+                "Cardinality": 2,
+                "Datapoints": [
+                    {
+                        "data": null,
+                        "set": [
+                            0.6790846759202163,
+                            0.21855305259276428
+                        ]
+                    },
+                    {
+                        "data": null,
+                        "set": [
+                            0.6645600532184904,
+                            0.4377141871869802
+                        ]
+                    }
+                ],
+                "Depth": 3,
+                "Pivot": 0.4377141871869802,
+                "leftChild": {
+                    "Cardinality": 1,
+                    "Datapoints": [
+                        {
+                            "data": null,
+                            "set": [
+                                0.6790846759202163,
+                                0.21855305259276428
+                            ]
+                        }
+                    ],
+                    "Depth": 4,
+                    "Pivot": 0,
+                    "leftChild": null,
+                    "rightChild": null
+                },
+                "rightChild": {
+                    "Cardinality": 1,
+                    "Datapoints": [
+                        {
+                            "data": null,
+                            "set": [
+                                0.6645600532184904,
+                                0.4377141871869802
+                            ]
+                        }
+                    ],
+                    "Depth": 4,
+                    "Pivot": 0,
+                    "leftChild": null,
+                    "rightChild": null
+                }
+            }
+        },
+        "rightChild": {
+            "Cardinality": 3,
+            "Datapoints": [
+                {
+                    "data": null,
+                    "set": [
+                        0.4246374970712657,
+                        0.6868230728671094
+                    ]
+                },
+                {
+                    "data": null,
+                    "set": [
+                        0.5152126285020654,
+                        0.8136399609900968
+                    ]
+                },
+                {
+                    "data": null,
+                    "set": [
+                        0.6046602879796196,
+                        0.9405090880450124
+                    ]
+                }
+            ],
+            "Depth": 2,
+            "Pivot": 0.5152126285020654,
+            "leftChild": {
+                "Cardinality": 1,
+                "Datapoints": [
+                    {
+                        "data": null,
+                        "set": [
+                            0.4246374970712657,
+                            0.6868230728671094
+                        ]
+                    }
+                ],
+                "Depth": 3,
+                "Pivot": 0,
+                "leftChild": null,
+                "rightChild": null
+            },
+            "rightChild": {
+                "Cardinality": 2,
+                "Datapoints": [
+                    {
+                        "data": null,
+                        "set": [
+                            0.5152126285020654,
+                            0.8136399609900968
+                        ]
+                    },
+                    {
+                        "data": null,
+                        "set": [
+                            0.6046602879796196,
+                            0.9405090880450124
+                        ]
+                    }
+                ],
+                "Depth": 3,
+                "Pivot": 0.9405090880450124,
+                "leftChild": {
+                    "Cardinality": 1,
+                    "Datapoints": [
+                        {
+                            "data": null,
+                            "set": [
+                                0.5152126285020654,
+                                0.8136399609900968
+                            ]
+                        }
+                    ],
+                    "Depth": 4,
+                    "Pivot": 0,
+                    "leftChild": null,
+                    "rightChild": null
+                },
+                "rightChild": {
+                    "Cardinality": 1,
+                    "Datapoints": [
+                        {
+                            "data": null,
+                            "set": [
+                                0.6046602879796196,
+                                0.9405090880450124
+                            ]
+                        }
+                    ],
+                    "Depth": 4,
+                    "Pivot": 0,
+                    "leftChild": null,
+                    "rightChild": null
+                }
+            }
+        }
+    }
+}
