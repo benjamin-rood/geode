@@ -27,6 +27,35 @@ var (
 		&Datapoint{nil, []float64{7, 9}},
 		&Datapoint{nil, []float64{9, 6}},
 	}
+
+	nonDistinctDps = Datapoints{
+		&Datapoint{nil, []float64{-3, 7}},
+		&Datapoint{nil, []float64{5, -4}},
+		&Datapoint{nil, []float64{6, 8}},
+		&Datapoint{nil, []float64{7, 2}},
+		&Datapoint{nil, []float64{0, -9}},
+		&Datapoint{nil, []float64{5000, 0}},
+		&Datapoint{nil, []float64{1, 9}},
+		&Datapoint{nil, []float64{1, 9}},
+		&Datapoint{nil, []float64{1, 9}},
+		&Datapoint{nil, []float64{1, 9}},
+		&Datapoint{nil, []float64{0, -1}},
+		&Datapoint{nil, []float64{5000, 0}},
+	}
+
+	singleDimDps = Datapoints{
+		&Datapoint{nil, []float64{0}},
+		&Datapoint{nil, []float64{5}},
+		&Datapoint{nil, []float64{-10}},
+		&Datapoint{nil, []float64{-100}},
+		&Datapoint{nil, []float64{5000}},
+		&Datapoint{nil, []float64{5000}},
+		&Datapoint{nil, []float64{5000}},
+		&Datapoint{nil, []float64{5000}},
+		&Datapoint{nil, []float64{5000}},
+		&Datapoint{nil, []float64{5000}},
+		&Datapoint{nil, []float64{1}},
+	}
 )
 
 type intAndFloat struct {

@@ -1,0 +1,8 @@
+{
+    "depth=0 (pivots)": "{5000}",
+    "depth=1 (pivots)": "{0, 0}",
+    "depth=2 (pivots)": "{-10, 1}",
+    "depth=3 (pivots)": "{0, 0, 0, 5}",
+    "depth=4 (pivots)": "{0, 0}",
+    "leaves": "{(-100) (-10) (0) (1) (5) (5000)}"
+}
