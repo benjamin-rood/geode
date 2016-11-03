@@ -71,6 +71,9 @@ func RandomDatapointInRange(n uint, min, max float64) *Datapoint {
 }
 
 func (d *Datapoint) setString() string {
+	if d == nil {
+		return ""
+	}
 	pointString := "("
 	for _, f := range d.set {
 		pointString += fmt.Sprint(f, ", ")
@@ -170,11 +173,28 @@ func (ds *Datapoints) Import(I Importable) {
 func (ds *Datapoints) PointsSetString() string {
 	pss := `{`
 	for _, d := range *ds {
+		if d == nil {
+			continue
+		}
 		pss += (d.setString() + " ")
 	}
 
 	pss = pss[:len(pss)-1] + `}`
 	return pss
+}
+
+func (ds Datapoints) notDistinct() bool {
+	sz := len(ds)
+	if sz <= 1 {
+		return false
+	}
+
+	for i := 0; i < len(ds)-1; i++ {
+		if !ds[i].EqualTo(ds[i+1]) {
+			return false
+		}
+	}
+	return true
 }
 
 // MarshalJSON implements encoding/json Marshaler interface

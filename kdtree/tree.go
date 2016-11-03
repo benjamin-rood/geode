@@ -1,6 +1,11 @@
 package kdtree
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"math/rand"
+	"time"
+)
 
 // Branch is a Binary Tree Node
 type Branch struct {
@@ -24,12 +29,6 @@ var (
 		return pivot
 	}
 
-	// LazySplit implements a middle split on an unsorted set for the pivot value
-	LazySplit = func(ds Datapoints, axis int) float64 {
-		midpoint := len(ds) / 2
-		return ds[midpoint].set[axis]
-	}
-
 	// Median implements a true median split on a sorted set for the pivot value
 	// note: will be significantly slower
 	Median = func(ds Datapoints, axis int) float64 {
@@ -51,6 +50,15 @@ func Build(ds Datapoints, depth int, pivotDef PivotFunc) *Branch {
 	if ds == nil {
 		return nil
 	}
+
+	sz := len(ds)
+	if sz <= 1 {
+		return &Branch{ds[:1], 0, depth, nil, nil}
+	}
+	if ds.notDistinct() {
+		return &Branch{ds, 0, depth, nil, nil}
+	}
+
 	if pivotDef == nil {
 		pivotDef = LazyAverage
 	}
@@ -63,16 +71,11 @@ func Build(ds Datapoints, depth int, pivotDef PivotFunc) *Branch {
 		right:      nil,
 	}
 
-	sz := len(branch.Datapoints)
-	if sz <= 1 {
-		return &Branch{branch.Datapoints[:1], 0, depth, nil, nil}
-	}
-
 	dimensionality := len(branch.Datapoints[0].set)
 	axis := depth % dimensionality
 	branch.pivot = pivotDef(branch.Datapoints, axis)
 
-	var leftSet, rightSet Datapoints
+	leftSet, rightSet := make(Datapoints, 0, sz), make(Datapoints, 0, sz)
 
 	for i := range branch.Datapoints {
 		if branch.Datapoints[i].set[axis] < branch.pivot {
@@ -104,8 +107,12 @@ func (branch *Branch) MaxDepth() int {
 // ANN achieves an extremely high degree of accuracy when the density of the points
 // in each axis > 100,000; where density is defined as the number of leaves / (max-min).
 func ANN(branch *Branch, target *Datapoint) *Datapoint {
-	if len(branch.Datapoints) == 1 {
+	sz := len(branch.Datapoints)
+	if sz == 1 {
 		return branch.Datapoints[0]
+	}
+	if branch.Datapoints.notDistinct() {
+		return branch.Datapoints[rand.Intn(sz)] // pick a pseudorandom point in the range.
 	}
 
 	dimensionality := len(branch.Datapoints[0].set)
@@ -122,7 +129,7 @@ func ANN(branch *Branch, target *Datapoint) *Datapoint {
 }
 
 func areaN(branch *Branch, target *Datapoint, granularity int) Datapoints {
-	if len(branch.Datapoints) <= granularity {
+	if len(branch.Datapoints) <= granularity || branch.Datapoints.notDistinct() {
 		return branch.Datapoints
 	}
 
@@ -217,4 +224,51 @@ func (branch *Branch) MarshalJSON() ([]byte, error) {
 		"leftChild":   branch.left,
 		"rightChild":  branch.right,
 	})
+}
+
+func buildDebug(ds Datapoints, depth int, pivotDef PivotFunc) *Branch {
+	if ds == nil {
+		return nil
+	}
+	sz := len(ds)
+	fmt.Println(sz)
+	fmt.Println(ds.PointsSetString())
+	time.Sleep(250 * time.Millisecond)
+	if sz <= 1 {
+		return &Branch{ds[:1], 0, depth, nil, nil}
+	}
+	if ds.notDistinct() {
+		return &Branch{ds, 0, depth, nil, nil}
+	}
+
+	if pivotDef == nil {
+		pivotDef = LazyAverage
+	}
+
+	branch := Branch{
+		Datapoints: ds,
+		pivot:      0,
+		depth:      depth,
+		left:       nil,
+		right:      nil,
+	}
+
+	dimensionality := len(branch.Datapoints[0].set)
+	axis := depth % dimensionality
+	branch.pivot = pivotDef(branch.Datapoints, axis)
+	fmt.Println(`branch.pivot =`, branch.pivot)
+
+	leftSet, rightSet := make(Datapoints, 0, sz), make(Datapoints, 0, sz)
+
+	for i := range branch.Datapoints {
+		if branch.Datapoints[i].set[axis] < branch.pivot {
+			leftSet = append(leftSet, branch.Datapoints[i])
+		} else {
+			rightSet = append(rightSet, branch.Datapoints[i])
+		}
+	}
+
+	branch.left = buildDebug(leftSet, depth+1, pivotDef)
+	branch.right = buildDebug(rightSet, depth+1, pivotDef)
+	return &branch
 }
