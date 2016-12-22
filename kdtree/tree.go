@@ -18,6 +18,7 @@ type Branch struct {
 // PivotFunc calculates the pivot value
 type PivotFunc func(Datapoints, int) float64
 
+// Set of pre-defined functions which match the prototype of `PivotFunc`
 var (
 	// LazyAverage implements a simple fast average split to produce the pivot value
 	// Sufficient for large numbers of Datapoints with uniformly distributed values
